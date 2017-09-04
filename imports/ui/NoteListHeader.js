@@ -17,7 +17,7 @@ export class NoteListHeader extends React.Component {
 };
 
 NoteListHeader.propTypes = {
-  meteorCall: PropTypes.func
+  meteorCall: PropTypes.func.isRequired
 };
 
 export default createContainer(() => {
