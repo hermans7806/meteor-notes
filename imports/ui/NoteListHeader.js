@@ -2,10 +2,15 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import { Meteor } from 'meteor/meteor';
 import { createContainer } from 'meteor/react-meteor-data';
+import { Session } from 'meteor/session';
 
 export class NoteListHeader extends React.Component {
   onClick(e) {
-    this.props.meteorCall('notes.insert');
+    this.props.meteorCall('notes.insert', (err, res) => {
+      if (res) {
+        this.props.Session.set('selectedNoteId', res);
+      }
+    });
   }
   render() {
     return (
@@ -17,11 +22,13 @@ export class NoteListHeader extends React.Component {
 };
 
 NoteListHeader.propTypes = {
-  meteorCall: PropTypes.func.isRequired
+  meteorCall: PropTypes.func.isRequired,
+  Session: PropTypes.object.isRequired
 };
 
 export default createContainer(() => {
   return {
-    meteorCall: Meteor.call
+    meteorCall: Meteor.call,
+    Session
   };
 }, NoteListHeader);
