@@ -32,10 +32,10 @@ NoteList.propTypes = {
 export default createContainer(() => {
   const selectedNoteId = Session.get('selectedNoteId');
   Meteor.subscribe('notes');
-  const search = Session.get('searchText') ? Session.get('searchText')+'*' : '';
+  const search = Session.get('searchText') ? Session.get('searchText') : '';
 
   return {
-    notes: Notes.find({title:{$regex: search}}, { sort: { updatedAt: -1 } }).fetch().map((note) => {
+    notes: Notes.find({title:{$regex: search, $options:"i"}}, { sort: { updatedAt: -1 } }).fetch().map((note) => {
       return {
         ...note,
         selected: (note._id === selectedNoteId ? true : false)
