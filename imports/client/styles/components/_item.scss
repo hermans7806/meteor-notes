@@ -13,6 +13,11 @@
   padding: $space;
 }
 
+.item-list__search {
+  margin: 0 $space;
+  width: 100%;
+}
+
 // Item
 .item {
   border-left: $item-border-width solid transparent;

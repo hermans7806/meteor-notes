@@ -1,5 +1,6 @@
 import React from 'react';
 import PropTypes from 'prop-types';
+import Modal from 'react-modal';
 import { createContainer } from 'meteor/react-meteor-data';
 import { Session } from 'meteor/session';
 import { Meteor } from 'meteor/meteor';
@@ -12,7 +13,8 @@ export class Editor extends React.Component {
     super(props);
     this.state = {
       title: '',
-      body: ''
+      body: '',
+      isOpen: false
     }
   }
   handleTitleChange(e) {
@@ -28,6 +30,12 @@ export class Editor extends React.Component {
   handleRemoval() {
     this.props.call('notes.remove', this.props.note._id);
     this.props.browserHistory.push('/dashboard');
+    this.handleModalClose();
+  }
+  handleModalClose() {
+    this.setState({
+      isOpen: false
+    });
   }
   componentDidUpdate(prevProps, prevState) {
     const currentNoteId = this.props.note ? this.props.note._id : undefined;
@@ -47,7 +55,18 @@ export class Editor extends React.Component {
           <input className="editor__title" value={this.state.title} placeholder="Untitled Note" onChange={ this.handleTitleChange.bind(this) }/>
           <textarea className="editor__body" value={this.state.body} placeholder="Your note here" onChange={ this.handleBodyChange.bind(this) }></textarea>
           <div>
-            <button className="button button--secondary" onClick={this.handleRemoval.bind(this)}>Delete Note</button>
+            <button className="button button--secondary" onClick={() => this.setState({isOpen: true})}>Delete Note</button>
+            <Modal
+              isOpen={this.state.isOpen}
+              contentLabel="Delete Note"
+              onRequestClose={this.handleModalClose.bind(this)}
+              className="boxed-view__box"
+              overlayClassName="boxed-view boxed-view--modal">
+              <h1>Delete Note</h1>
+              <p>Are you sure want to delete this note?</p>
+              <button className="button" onClick={this.handleRemoval.bind(this)}>OK</button>
+              <button type="button" className="button button--secondary" onClick={this.handleModalClose.bind(this)}>Cancel</button>
+            </Modal>
           </div>
         </div>
       );

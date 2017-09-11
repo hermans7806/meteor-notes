@@ -9,14 +9,20 @@ import NoteListHeader from './NoteListHeader';
 import NoteListItem from './NoteListItem';
 import NoteListEmptyItem from './NoteListEmptyItem';
 
-export const NoteList = (props) => {
-  return (
-    <div className="item-list">
-      <NoteListHeader/>
-      { props.notes.length === 0 ? <NoteListEmptyItem/> : undefined }
-      { props.notes.map((note) => <NoteListItem key={note._id} note={note}/>) }
-    </div>
-  );
+export class NoteList extends React.Component {
+  handleSearchChange(e) {
+    Session.set('searchText', e.target.value);
+  }
+  render() {
+    return (
+      <div className="item-list">
+        <NoteListHeader/>
+        <input className="item-list__search" type="text" placeholder="Search for title" onChange={ this.handleSearchChange.bind(this) }/>
+        { this.props.notes.length === 0 ? <NoteListEmptyItem/> : undefined }
+        { this.props.notes.map((note) => <NoteListItem key={note._id} note={note}/>) }
+      </div>
+    );
+  }
 };
 
 NoteList.propTypes = {
@@ -26,9 +32,10 @@ NoteList.propTypes = {
 export default createContainer(() => {
   const selectedNoteId = Session.get('selectedNoteId');
   Meteor.subscribe('notes');
+  const search = Session.get('searchText') ? Session.get('searchText')+'*' : '';
 
   return {
-    notes: Notes.find({}, { sort: { updatedAt: -1 } }).fetch().map((note) => {
+    notes: Notes.find({title:{$regex: search}}, { sort: { updatedAt: -1 } }).fetch().map((note) => {
       return {
         ...note,
         selected: (note._id === selectedNoteId ? true : false)

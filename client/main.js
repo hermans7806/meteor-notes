@@ -17,6 +17,7 @@ Tracker.autorun(() => {
 Tracker.autorun(() => {
   const selectedNoteId = Session.get('selectedNoteId');
   Session.set('isNavOpen', false);
+  Session.set('searchText', '');
 
   if (selectedNoteId) {
     browserHistory.replace(`/dashboard/${selectedNoteId}`);
